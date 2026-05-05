@@ -11,6 +11,7 @@ import {
   LoadingOverlay,
   Stack,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { IconTrendingUp, IconChevronRight } from "@tabler/icons-react";
 import { dashboardApi } from "../lib/api";
 import type { DashboardStats } from "../types/lead";
@@ -46,8 +47,12 @@ export default function Dashboard() {
     try {
       const data = await dashboardApi.getStats();
       setStats(data);
-    } catch (error) {
-      console.error("Error loading stats:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to load dashboard statistics",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }

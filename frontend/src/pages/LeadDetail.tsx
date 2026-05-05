@@ -23,6 +23,7 @@ import {
   IconNote,
   IconSend,
 } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { leadsApi, notesApi } from "../lib/api";
 import { STATUS_COLORS } from "../types/lead";
 import type { Lead, LeadStatus, Note } from "../types/lead";
@@ -47,8 +48,12 @@ export default function LeadDetail() {
     try {
       const data = await leadsApi.getById(leadId);
       setLead(data);
-    } catch (error) {
-      console.error("Error loading lead:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to load lead details",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
@@ -58,8 +63,12 @@ export default function LeadDetail() {
     try {
       const data = await notesApi.getByLeadId(leadId);
       setNotes(data);
-    } catch (error) {
-      console.error("Error loading notes:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to load notes",
+        color: "red",
+      });
     }
   };
 
@@ -67,9 +76,18 @@ export default function LeadDetail() {
     if (!confirm("Are you sure you want to delete this lead?")) return;
     try {
       await leadsApi.delete(id!);
+      notifications.show({
+        title: "Deleted",
+        message: "Lead removed successfully",
+        color: "green",
+      });
       navigate("/leads");
-    } catch (error) {
-      console.error("Error deleting lead:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to delete lead",
+        color: "red",
+      });
     }
   };
 
@@ -80,8 +98,17 @@ export default function LeadDetail() {
       await notesApi.create(id, noteContent);
       setNoteContent("");
       loadNotes(id);
-    } catch (error) {
-      console.error("Error adding note:", error);
+      notifications.show({
+        title: "Note Added",
+        message: "Your note has been saved",
+        color: "green",
+      });
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to add note",
+        color: "red",
+      });
     } finally {
       setSubmittingNote(false);
     }
@@ -91,8 +118,17 @@ export default function LeadDetail() {
     try {
       await leadsApi.update(id!, { status: newStatus });
       loadLead(id!);
-    } catch (error) {
-      console.error("Error updating status:", error);
+      notifications.show({
+        title: "Status Updated",
+        message: `Lead status changed to ${newStatus}`,
+        color: "blue",
+      });
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to update status",
+        color: "red",
+      });
     }
   };
 

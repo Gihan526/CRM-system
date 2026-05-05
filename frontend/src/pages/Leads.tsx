@@ -24,6 +24,7 @@ import {
   IconTrash,
   IconDotsVertical,
 } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { leadsApi } from "../lib/api";
 import { LEAD_STATUSES, LEAD_SOURCES, STATUS_COLORS } from "../types/lead";
 import type { Lead, LeadStatus } from "../types/lead";
@@ -46,8 +47,12 @@ export default function Leads() {
         filters.status ? { status: filters.status } : undefined
       );
       setLeads(data);
-    } catch (error) {
-      console.error("Error loading leads:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to load leads",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
@@ -81,8 +86,17 @@ export default function Leads() {
     try {
       await leadsApi.delete(id);
       loadLeads();
-    } catch (error) {
-      console.error("Error deleting lead:", error);
+      notifications.show({
+        title: "Deleted",
+        message: "Lead removed successfully",
+        color: "green",
+      });
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to delete lead",
+        color: "red",
+      });
     }
   };
 

@@ -14,6 +14,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft, IconDeviceFloppy } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { leadsApi } from "../lib/api";
 import { LEAD_STATUSES, LEAD_SOURCES } from "../types/lead";
 import type { LeadStatus } from "../types/lead";
@@ -69,8 +70,12 @@ export default function LeadForm() {
         status: lead.status as LeadStatus,
         estimatedDealValue: lead.estimatedDealValue || undefined,
       });
-    } catch (error) {
-      console.error("Error loading lead:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to load lead data",
+        color: "red",
+      });
     } finally {
       setLoading(false);
     }
@@ -86,12 +91,26 @@ export default function LeadForm() {
 
       if (isEditing && id) {
         await leadsApi.update(id, data);
+        notifications.show({
+          title: "Saved",
+          message: "Lead updated successfully",
+          color: "green",
+        });
       } else {
         await leadsApi.create(data as any);
+        notifications.show({
+          title: "Created",
+          message: "New lead added successfully",
+          color: "green",
+        });
       }
       navigate("/leads");
-    } catch (error) {
-      console.error("Error saving lead:", error);
+    } catch {
+      notifications.show({
+        title: "Error",
+        message: "Failed to save lead",
+        color: "red",
+      });
     } finally {
       setSubmitting(false);
     }
