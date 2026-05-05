@@ -68,3 +68,31 @@ model Verification {
 
   @@map("verification")
 }
+
+model Lead {
+  id                  String   @id @default(uuid())
+  leadName            String
+  companyName         String
+  email               String
+  phoneNumber         String?
+  leadSource          String
+  assignedSalesperson String?
+  status              String   @default("New")
+  estimatedDealValue  Float?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  notes               Note[]
+
+  @@map("lead")
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  content   String
+  createdBy String
+  createdAt DateTime @default(now())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("note")
+}
