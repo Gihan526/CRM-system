@@ -3,16 +3,126 @@ import { useNavigate } from "react-router-dom";
 import {
   Container,
   Title,
-  SimpleGrid,
-  Paper,
   Text,
-  Button,
+  SimpleGrid,
   Group,
+  Box,
+  Button,
   LoadingOverlay,
+  Stack,
 } from "@mantine/core";
-import { IconPlus, IconUsers, IconTrendingUp } from "@tabler/icons-react";
+import {
+  IconUsers,
+  IconUserPlus,
+  IconMailOpened,
+  IconTarget,
+  IconFileInvoice,
+  IconTrophy,
+  IconX,
+  IconTrendingUp,
+  IconChevronRight,
+} from "@tabler/icons-react";
 import { dashboardApi } from "../lib/api";
 import type { DashboardStats } from "../types/lead";
+
+interface StatCardProps {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color?: string;
+}
+
+function StatCard({ title, value, icon }: StatCardProps) {
+  return (
+    <Box
+      style={{
+        border: "1px solid #E5E5E5",
+        borderRadius: 8,
+        padding: "20px 24px",
+        backgroundColor: "#FFFFFF",
+        transition: "border-color 0.15s ease",
+        cursor: "default",
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "#D1D1D1";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = "#E5E5E5";
+      }}
+    >
+      <Group justify="space-between" align="flex-start">
+        <div>
+          <Text
+            size="sm"
+            style={{
+              color: "#6B7280",
+              fontWeight: 400,
+              marginBottom: 8,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {title}
+          </Text>
+          <Text
+            style={{
+              fontSize: 32,
+              fontWeight: 600,
+              color: "#111827",
+              lineHeight: 1.2,
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {value}
+          </Text>
+        </div>
+        <Box style={{ color: "#9CA3AF" }}>{icon}</Box>
+      </Group>
+    </Box>
+  );
+}
+
+interface DealValueCardProps {
+  title: string;
+  value: number;
+  prefix?: string;
+}
+
+function DealValueCard({ title, value, prefix = "$" }: DealValueCardProps) {
+  return (
+    <Box
+      style={{
+        border: "1px solid #E5E5E5",
+        borderRadius: 8,
+        padding: "24px",
+        backgroundColor: "#FAFAFA",
+      }}
+    >
+      <Text
+        size="sm"
+        style={{
+          color: "#6B7280",
+          fontWeight: 400,
+          marginBottom: 12,
+          letterSpacing: "-0.01em",
+        }}
+      >
+        {title}
+      </Text>
+      <Text
+        style={{
+          fontSize: 28,
+          fontWeight: 600,
+          color: "#111827",
+          lineHeight: 1.2,
+          letterSpacing: "-0.02em",
+        }}
+      >
+        {prefix}
+        {value.toLocaleString()}
+      </Text>
+    </Box>
+  );
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -38,102 +148,159 @@ export default function Dashboard() {
     {
       title: "Total Leads",
       value: stats?.totalLeads || 0,
-      color: "blue",
-      icon: IconUsers,
+      icon: <IconUsers size={22} stroke={1.5} />,
     },
     {
       title: "New Leads",
       value: stats?.newLeads || 0,
-      color: "gray",
-      icon: IconUsers,
+      icon: <IconUserPlus size={22} stroke={1.5} />,
     },
     {
       title: "Contacted",
       value: stats?.contactedLeads || 0,
-      color: "orange",
-      icon: IconUsers,
+      icon: <IconMailOpened size={22} stroke={1.5} />,
     },
     {
       title: "Qualified",
       value: stats?.qualifiedLeads || 0,
-      color: "yellow",
-      icon: IconUsers,
+      icon: <IconTarget size={22} stroke={1.5} />,
+    },
+    {
+      title: "Proposal Sent",
+      value: stats?.proposalSentLeads || 0,
+      icon: <IconFileInvoice size={22} stroke={1.5} />,
     },
     {
       title: "Won",
       value: stats?.wonLeads || 0,
-      color: "green",
-      icon: IconTrendingUp,
-    },
-    {
-      title: "Lost",
-      value: stats?.lostLeads || 0,
-      color: "red",
-      icon: IconUsers,
+      icon: <IconTrophy size={22} stroke={1.5} />,
     },
   ];
 
   return (
-    <Container fluid p="xl" pos="relative">
+    <Container fluid px="xl" py="xl" pos="relative" style={{ maxWidth: 1200 }}>
       <LoadingOverlay visible={loading} overlayProps={{ radius: "sm", blur: 2 }} />
 
-      <Group justify="space-between" mb="xl">
+      {/* Header */}
+      <Group justify="space-between" align="flex-start" mb="xl">
         <div>
-          <Title order={2}>Dashboard</Title>
-          <Text c="dimmed" size="sm">
+          <Title
+            order={1}
+            style={{
+              fontSize: 40,
+              fontWeight: 700,
+              color: "#111827",
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
+              marginBottom: 8,
+            }}
+          >
+            Dashboard
+          </Title>
+          <Text
+            size="md"
+            style={{
+              color: "#6B7280",
+              fontWeight: 400,
+              letterSpacing: "-0.01em",
+            }}
+          >
             Overview of your sales pipeline
           </Text>
         </div>
         <Button
-          leftSection={<IconPlus size={16} />}
+          variant="default"
+          leftSection={<IconTrendingUp size={16} stroke={1.5} />}
           onClick={() => navigate("/leads/new")}
+          style={{
+            border: "1px solid #E5E5E5",
+            color: "#374151",
+            fontWeight: 500,
+            height: 36,
+            borderRadius: 6,
+            boxShadow: "none",
+          }}
         >
           Add New Lead
         </Button>
       </Group>
 
-      {/* Stats Grid */}
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} mb="xl">
-        {statCards.map((card) => (
-          <Paper key={card.title} withBorder p="md" radius="md" shadow="sm">
-            <Group justify="space-between">
+      <Stack gap="xl">
+        {/* Stats Grid */}
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="md">
+          {statCards.map((card) => (
+            <StatCard key={card.title} {...card} />
+          ))}
+        </SimpleGrid>
+
+        {/* Deal Values */}
+        <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
+          <DealValueCard
+            title="Total Estimated Deal Value"
+            value={stats?.totalDealValue || 0}
+          />
+          <DealValueCard
+            title="Total Won Deal Value"
+            value={stats?.wonDealValue || 0}
+          />
+        </SimpleGrid>
+
+        {/* Lost Leads & View All */}
+        <Group justify="space-between" align="center">
+          <Box
+            style={{
+              border: "1px solid #E5E5E5",
+              borderRadius: 8,
+              padding: "20px 24px",
+              backgroundColor: "#FFFFFF",
+              minWidth: 200,
+            }}
+          >
+            <Group justify="space-between" align="flex-start">
               <div>
-                <Text c="dimmed" size="sm">
-                  {card.title}
+                <Text
+                  size="sm"
+                  style={{
+                    color: "#6B7280",
+                    fontWeight: 400,
+                    marginBottom: 8,
+                  }}
+                >
+                  Lost
                 </Text>
-                <Text fw={700} size="xl">
-                  {card.value}
+                <Text
+                  style={{
+                    fontSize: 32,
+                    fontWeight: 600,
+                    color: "#111827",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {stats?.lostLeads || 0}
                 </Text>
               </div>
-              <card.icon size={32} color={`var(--mantine-color-${card.color}-6)`} />
+              <Box style={{ color: "#9CA3AF" }}>
+                <IconX size={22} stroke={1.5} />
+              </Box>
             </Group>
-          </Paper>
-        ))}
-      </SimpleGrid>
+          </Box>
 
-      {/* Deal Value Stats */}
-      <SimpleGrid cols={{ base: 1, sm: 2 }} mb="xl">
-        <Paper withBorder p="md" radius="md" shadow="sm" bg="blue.0">
-          <Text c="dimmed" size="sm">
-            Total Estimated Deal Value
-          </Text>
-          <Text fw={700} size="xl">
-            ${stats?.totalDealValue?.toLocaleString() || "0"}
-          </Text>
-        </Paper>
-        <Paper withBorder p="md" radius="md" shadow="sm" bg="green.0">
-          <Text c="dimmed" size="sm">
-            Total Won Deal Value
-          </Text>
-          <Text fw={700} size="xl">
-            ${stats?.wonDealValue?.toLocaleString() || "0"}
-          </Text>
-        </Paper>
-      </SimpleGrid>
-
-      <Button variant="light" onClick={() => navigate("/leads")} fullWidth>
-        View All Leads
-      </Button>
+          <Button
+            variant="subtle"
+            rightSection={<IconChevronRight size={16} stroke={2} />}
+            onClick={() => navigate("/leads")}
+            style={{
+              color: "#374151",
+              fontWeight: 500,
+              fontSize: 14,
+              height: 36,
+              borderRadius: 6,
+            }}
+          >
+            View All Leads
+          </Button>
+        </Group>
+      </Stack>
     </Container>
   );
 }
