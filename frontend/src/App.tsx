@@ -65,12 +65,13 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
-      navbar={{ width: 260, breakpoint: "sm" }}
+      navbar={{ width: 220, breakpoint: "sm" }}
       padding={0}
       styles={{
         main: {
-          marginLeft: 260,
+          marginLeft: 220,
           minHeight: "100vh",
+          backgroundColor: "var(--bg-primary)",
         },
       }}
     >

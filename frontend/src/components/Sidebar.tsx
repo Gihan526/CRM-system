@@ -37,53 +37,61 @@ export default function Sidebar() {
   return (
     <Box
       style={{
-        width: 240,
+        width: 220,
         height: "100vh",
-        backgroundColor: "#F7F7F7",
+        backgroundColor: "var(--bg-sidebar)",
         display: "flex",
         flexDirection: "column",
         position: "fixed",
         left: 0,
         top: 0,
         zIndex: 100,
-        borderRight: "1px solid #EEEEEE",
+        borderRight: "1px solid var(--border-light)",
       }}
     >
       {/* Logo */}
-      <Box px="md" pt="lg" pb="md">
+      <Box px="lg" pt="xl" pb="md">
         <Text
           style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: "#111827",
-            letterSpacing: "-0.03em",
+            fontFamily: "var(--font-display)",
+            fontSize: 24,
+            fontWeight: 600,
+            color: "var(--text-primary)",
+            letterSpacing: "-0.02em",
+            lineHeight: 1.2,
           }}
         >
           CRM
         </Text>
         <Text
-          size="xs"
           style={{
-            color: "#9CA3AF",
+            fontFamily: "var(--font-body)",
+            fontSize: 11,
             fontWeight: 400,
+            color: "var(--text-tertiary)",
             marginTop: 2,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
           }}
         >
           Lead Management
         </Text>
       </Box>
 
-      <Divider style={{ borderColor: "#EEEEEE" }} />
+      <Divider style={{ borderColor: "var(--border-light)", margin: "0 20px" }} />
 
       {/* Navigation */}
-      <Box px="xs" pt="sm" style={{ flex: 1 }}>
+      <Box px="sm" pt="md" style={{ flex: 1 }}>
         <NavLink
           label={
             <Text
               size="sm"
               style={{
-                fontWeight: isActive("/dashboard") ? 600 : 400,
-                color: isActive("/dashboard") ? "#111827" : "#6B7280",
+                fontFamily: "var(--font-body)",
+                fontWeight: isActive("/dashboard") ? 500 : 400,
+                color: isActive("/dashboard") ? "var(--text-primary)" : "var(--text-secondary)",
+                letterSpacing: "0.01em",
+                fontSize: 14,
               }}
             >
               Dashboard
@@ -91,20 +99,21 @@ export default function Sidebar() {
           }
           leftSection={
             <IconLayoutDashboard
-              size={18}
+              size={17}
               stroke={1.5}
-              style={{ color: isActive("/dashboard") ? "#111827" : "#9CA3AF" }}
+              style={{ color: isActive("/dashboard") ? "var(--text-primary)" : "var(--text-tertiary)" }}
             />
           }
           active={isActive("/dashboard")}
           onClick={() => navigate("/dashboard")}
           styles={{
             root: {
-              borderRadius: 6,
+              borderRadius: "var(--radius-sm)",
               marginBottom: 2,
-              backgroundColor: isActive("/dashboard") ? "#EEEEEE" : "transparent",
+              backgroundColor: isActive("/dashboard") ? "var(--bg-hover)" : "transparent",
+              transition: "background-color 0.15s ease",
               "&:hover": {
-                backgroundColor: isActive("/dashboard") ? "#EEEEEE" : "#F0F0F0",
+                backgroundColor: isActive("/dashboard") ? "var(--bg-hover)" : "rgba(0,0,0,0.03)",
               },
             },
           }}
@@ -114,8 +123,11 @@ export default function Sidebar() {
             <Text
               size="sm"
               style={{
-                fontWeight: isActive("/leads") ? 600 : 400,
-                color: isActive("/leads") ? "#111827" : "#6B7280",
+                fontFamily: "var(--font-body)",
+                fontWeight: isActive("/leads") ? 500 : 400,
+                color: isActive("/leads") ? "var(--text-primary)" : "var(--text-secondary)",
+                letterSpacing: "0.01em",
+                fontSize: 14,
               }}
             >
               Leads
@@ -123,36 +135,42 @@ export default function Sidebar() {
           }
           leftSection={
             <IconUsers
-              size={18}
+              size={17}
               stroke={1.5}
-              style={{ color: isActive("/leads") ? "#111827" : "#9CA3AF" }}
+              style={{ color: isActive("/leads") ? "var(--text-primary)" : "var(--text-tertiary)" }}
             />
           }
           active={isActive("/leads")}
           onClick={() => navigate("/leads")}
           styles={{
             root: {
-              borderRadius: 6,
+              borderRadius: "var(--radius-sm)",
               marginBottom: 2,
-              backgroundColor: isActive("/leads") ? "#EEEEEE" : "transparent",
+              backgroundColor: isActive("/leads") ? "var(--bg-hover)" : "transparent",
+              transition: "background-color 0.15s ease",
               "&:hover": {
-                backgroundColor: isActive("/leads") ? "#EEEEEE" : "#F0F0F0",
+                backgroundColor: isActive("/leads") ? "var(--bg-hover)" : "rgba(0,0,0,0.03)",
               },
             },
           }}
         />
       </Box>
 
-      <Divider style={{ borderColor: "#EEEEEE" }} />
+      <Divider style={{ borderColor: "var(--border-light)", margin: "0 20px" }} />
 
       {/* User Section */}
-      <Box px="md" py="md">
+      <Box px="lg" py="lg">
         <Group gap="sm" mb="md">
           <Avatar
             radius="xl"
             size="sm"
-            color="gray"
-            style={{ backgroundColor: "#E5E5E5", color: "#6B7280" }}
+            style={{
+              backgroundColor: "var(--border-light)",
+              color: "var(--text-secondary)",
+              fontFamily: "var(--font-body)",
+              fontSize: 12,
+              fontWeight: 500,
+            }}
           >
             {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
           </Avatar>
@@ -160,9 +178,11 @@ export default function Sidebar() {
             <Text
               size="sm"
               style={{
+                fontFamily: "var(--font-body)",
                 fontWeight: 500,
-                color: "#374151",
-                letterSpacing: "-0.01em",
+                color: "var(--text-primary)",
+                fontSize: 13,
+                letterSpacing: "0.01em",
               }}
               truncate
             >
@@ -170,7 +190,12 @@ export default function Sidebar() {
             </Text>
             <Text
               size="xs"
-              style={{ color: "#9CA3AF", fontWeight: 400 }}
+              style={{
+                fontFamily: "var(--font-body)",
+                color: "var(--text-tertiary)",
+                fontWeight: 400,
+                fontSize: 11,
+              }}
               truncate
             >
               {user?.email}
@@ -184,22 +209,24 @@ export default function Sidebar() {
             alignItems: "center",
             gap: 8,
             padding: "6px 8px",
-            borderRadius: 6,
+            borderRadius: "var(--radius-sm)",
             cursor: "pointer",
-            color: "#9CA3AF",
+            color: "var(--text-tertiary)",
             transition: "all 0.15s ease",
+            fontFamily: "var(--font-body)",
+            fontSize: 13,
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.backgroundColor = "#F0F0F0";
-            (e.currentTarget as HTMLElement).style.color = "#EF4444";
+            (e.currentTarget as HTMLElement).style.backgroundColor = "rgba(0,0,0,0.03)";
+            (e.currentTarget as HTMLElement).style.color = "var(--accent-primary)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-            (e.currentTarget as HTMLElement).style.color = "#9CA3AF";
+            (e.currentTarget as HTMLElement).style.color = "var(--text-tertiary)";
           }}
         >
-          <IconLogout size={16} stroke={1.5} />
-          <Text size="sm">Logout</Text>
+          <IconLogout size={15} stroke={1.5} />
+          <Text size="sm" style={{ fontFamily: "var(--font-body)", fontSize: 13 }}>Logout</Text>
         </Box>
       </Box>
     </Box>

@@ -14,6 +14,7 @@ import {
   ActionIcon,
   Menu,
   Paper,
+  Box,
 } from "@mantine/core";
 import {
   IconPlus,
@@ -56,7 +57,6 @@ export default function Leads() {
     loadLeads();
   }, [loadLeads]);
 
-  // Client-side filtering for search and other filters
   const filteredLeads = leads.filter((lead) => {
     if (filters.leadSource && lead.leadSource !== filters.leadSource)
       return false;
@@ -87,26 +87,97 @@ export default function Leads() {
   };
 
   return (
-    <Container fluid p="xl" pos="relative">
+    <Container
+      fluid
+      px="xl"
+      py="xl"
+      pos="relative"
+      style={{
+        maxWidth: 1200,
+        marginLeft: "auto",
+        marginRight: "auto",
+      }}
+    >
       <LoadingOverlay visible={loading} overlayProps={{ radius: "sm", blur: 2 }} />
 
-      <Group justify="space-between" mb="lg">
+      {/* Header */}
+      <Group justify="space-between" align="flex-end" mb="xl">
         <div>
-          <Title order={2}>Leads</Title>
-          <Text c="dimmed" size="sm">
-            Manage your sales leads
+          <Title
+            order={1}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 44,
+              fontWeight: 600,
+              color: "var(--text-primary)",
+              letterSpacing: "-0.03em",
+              lineHeight: 1.1,
+              marginBottom: 8,
+            }}
+          >
+            Leads
+          </Title>
+          <Text
+            style={{
+              fontFamily: "var(--font-body)",
+              fontSize: 15,
+              color: "var(--text-secondary)",
+              fontWeight: 400,
+            }}
+          >
+            Manage your sales pipeline
           </Text>
         </div>
         <Button
-          leftSection={<IconPlus size={16} />}
+          variant="default"
+          leftSection={<IconPlus size={15} stroke={1.5} />}
           onClick={() => navigate("/leads/new")}
+          style={{
+            border: "1px solid var(--border-medium)",
+            color: "var(--text-primary)",
+            fontWeight: 500,
+            fontSize: 13,
+            height: 40,
+            borderRadius: "var(--radius-sm)",
+            backgroundColor: "var(--bg-surface)",
+            letterSpacing: "0.02em",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-dark)";
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--bg-hover)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-medium)";
+            (e.currentTarget as HTMLElement).style.backgroundColor = "var(--bg-surface)";
+          }}
         >
           Add New Lead
         </Button>
       </Group>
 
+      {/* Horizontal rule */}
+      <Box
+        style={{
+          height: 1,
+          backgroundColor: "var(--border-light)",
+          width: "100%",
+          marginBottom: "var(--space-xl)",
+        }}
+      />
+
       {/* Filters */}
-      <Paper withBorder p="md" mb="lg" radius="md">
+      <Paper
+        withBorder
+        p="md"
+        mb="lg"
+        radius="sm"
+        style={{
+          borderColor: "var(--border-light)",
+          backgroundColor: "var(--bg-surface)",
+          boxShadow: "none",
+        }}
+      >
         <Group grow>
           <Select
             label="Status"
@@ -117,9 +188,26 @@ export default function Leads() {
             }
             data={["", ...LEAD_STATUSES]}
             clearable
+            styles={{
+              label: {
+                fontFamily: "var(--font-body)",
+                fontSize: 12,
+                fontWeight: 500,
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 6,
+              },
+              input: {
+                fontFamily: "var(--font-body)",
+                borderColor: "var(--border-light)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: 14,
+              },
+            }}
           />
           <Select
-            label="Lead Source"
+            label="Source"
             placeholder="All sources"
             value={filters.leadSource}
             onChange={(value) =>
@@ -127,6 +215,23 @@ export default function Leads() {
             }
             data={["", ...LEAD_SOURCES]}
             clearable
+            styles={{
+              label: {
+                fontFamily: "var(--font-body)",
+                fontSize: 12,
+                fontWeight: 500,
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 6,
+              },
+              input: {
+                fontFamily: "var(--font-body)",
+                borderColor: "var(--border-light)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: 14,
+              },
+            }}
           />
           <TextInput
             label="Search"
@@ -135,112 +240,184 @@ export default function Leads() {
             onChange={(e) =>
               setFilters((prev) => ({ ...prev, search: e.target.value }))
             }
-            leftSection={<IconSearch size={16} />}
+            leftSection={<IconSearch size={16} stroke={1.5} />}
+            styles={{
+              label: {
+                fontFamily: "var(--font-body)",
+                fontSize: 12,
+                fontWeight: 500,
+                color: "var(--text-secondary)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                marginBottom: 6,
+              },
+              input: {
+                fontFamily: "var(--font-body)",
+                borderColor: "var(--border-light)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: 14,
+              },
+            }}
           />
         </Group>
       </Paper>
 
       {/* Leads Table */}
       {filteredLeads.length === 0 ? (
-        <Paper withBorder p="xl" radius="md" ta="center">
-          <Text c="dimmed">No leads found</Text>
+        <Paper
+          withBorder
+          p="xl"
+          radius="sm"
+          ta="center"
+          style={{
+            borderColor: "var(--border-light)",
+            backgroundColor: "var(--bg-surface)",
+            boxShadow: "none",
+          }}
+        >
+          <Text style={{ fontFamily: "var(--font-body)", color: "var(--text-secondary)" }}>
+            No leads found
+          </Text>
           <Button
-            variant="light"
+            variant="default"
             mt="md"
             onClick={() => navigate("/leads/new")}
+            style={{
+              border: "1px solid var(--border-medium)",
+              color: "var(--text-primary)",
+              fontFamily: "var(--font-body)",
+              fontSize: 13,
+            }}
           >
             Add Your First Lead
           </Button>
         </Paper>
       ) : (
-        <Table highlightOnHover withTableBorder>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Lead Name</Table.Th>
-              <Table.Th>Company</Table.Th>
-              <Table.Th>Status</Table.Th>
-              <Table.Th>Source</Table.Th>
-              <Table.Th>Deal Value</Table.Th>
-              <Table.Th>Assigned To</Table.Th>
-              <Table.Th>Created</Table.Th>
-              <Table.Th style={{ width: 80 }}>Actions</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {filteredLeads.map((lead) => (
-              <Table.Tr
-                key={lead.id}
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/leads/${lead.id}`)}
-              >
-                <Table.Td>
-                  <Text fw={500}>{lead.leadName}</Text>
-                  <Text size="xs" c="dimmed">
-                    {lead.email}
-                  </Text>
-                </Table.Td>
-                <Table.Td>{lead.companyName}</Table.Td>
-                <Table.Td>
-                  <Badge color={STATUS_COLORS[lead.status as LeadStatus]}>
-                    {lead.status}
-                  </Badge>
-                </Table.Td>
-                <Table.Td>{lead.leadSource}</Table.Td>
-                <Table.Td>
-                  {lead.estimatedDealValue
-                    ? `$${lead.estimatedDealValue.toLocaleString()}`
-                    : "-"}
-                </Table.Td>
-                <Table.Td>{lead.assignedSalesperson || "-"}</Table.Td>
-                <Table.Td>
-                  {new Date(lead.createdAt).toLocaleDateString()}
-                </Table.Td>
-                <Table.Td>
-                  <Menu>
-                    <Menu.Target>
-                      <ActionIcon
-                        variant="subtle"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <IconDotsVertical size={16} />
-                      </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item
-                        leftSection={<IconEye size={14} />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/leads/${lead.id}`);
-                        }}
-                      >
-                        View
-                      </Menu.Item>
-                      <Menu.Item
-                        leftSection={<IconEdit size={14} />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/leads/${lead.id}/edit`);
-                        }}
-                      >
-                        Edit
-                      </Menu.Item>
-                      <Menu.Item
-                        leftSection={<IconTrash size={14} />}
-                        color="red"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(lead.id);
-                        }}
-                      >
-                        Delete
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Table.Td>
+        <Paper
+          withBorder
+          radius="sm"
+          style={{
+            borderColor: "var(--border-light)",
+            backgroundColor: "var(--bg-surface)",
+            boxShadow: "none",
+            overflow: "hidden",
+          }}
+        >
+          <Table highlightOnHover withTableBorder styles={{
+            table: {
+              borderColor: "var(--border-light)",
+            },
+          }}>
+            <Table.Thead>
+              <Table.Tr style={{ backgroundColor: "var(--bg-sidebar)" }}>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)" }}>Lead</Table.Th>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)" }}>Status</Table.Th>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)" }}>Source</Table.Th>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)" }}>Value</Table.Th>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)" }}>Assigned</Table.Th>
+                <Table.Th style={{ fontFamily: "var(--font-body)", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--text-tertiary)", borderBottom: "1px solid var(--border-light)", width: 60 }}></Table.Th>
               </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+            </Table.Thead>
+            <Table.Tbody>
+              {filteredLeads.map((lead) => (
+                <Table.Tr
+                  key={lead.id}
+                  style={{
+                    cursor: "pointer",
+                    transition: "background-color 0.15s ease",
+                  }}
+                  onClick={() => navigate(`/leads/${lead.id}`)}
+                >
+                  <Table.Td style={{ borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    <Text style={{ fontFamily: "var(--font-body)", fontWeight: 500, fontSize: 14, color: "var(--text-primary)" }}>
+                      {lead.leadName}
+                    </Text>
+                    <Text style={{ fontFamily: "var(--font-body)", fontSize: 12, color: "var(--text-tertiary)", marginTop: 2 }}>
+                      {lead.companyName}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td style={{ borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    <Badge
+                      variant="outline"
+                      style={{
+                        fontFamily: "var(--font-body)",
+                        fontSize: 11,
+                        fontWeight: 500,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                        borderColor: STATUS_COLORS[lead.status as LeadStatus],
+                        color: STATUS_COLORS[lead.status as LeadStatus],
+                        backgroundColor: "transparent",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "4px 10px",
+                        height: "auto",
+                      }}
+                    >
+                      {lead.status}
+                    </Badge>
+                  </Table.Td>
+                  <Table.Td style={{ fontFamily: "var(--font-body)", fontSize: 14, color: "var(--text-secondary)", borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    {lead.leadSource}
+                  </Table.Td>
+                  <Table.Td style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--text-primary)", borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    {lead.estimatedDealValue
+                      ? `$${lead.estimatedDealValue.toLocaleString()}`
+                      : "—"}
+                  </Table.Td>
+                  <Table.Td style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--text-secondary)", borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    {lead.assignedSalesperson || "—"}
+                  </Table.Td>
+                  <Table.Td style={{ borderBottom: "1px solid var(--border-light)", padding: "16px 12px" }}>
+                    <Menu>
+                      <Menu.Target>
+                        <ActionIcon
+                          variant="subtle"
+                          onClick={(e) => e.stopPropagation()}
+                          style={{ color: "var(--text-tertiary)" }}
+                        >
+                          <IconDotsVertical size={16} stroke={1.5} />
+                        </ActionIcon>
+                      </Menu.Target>
+                      <Menu.Dropdown>
+                        <Menu.Item
+                          leftSection={<IconEye size={14} stroke={1.5} />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/leads/${lead.id}`);
+                          }}
+                          style={{ fontFamily: "var(--font-body)", fontSize: 13 }}
+                        >
+                          View
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={<IconEdit size={14} stroke={1.5} />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/leads/${lead.id}/edit`);
+                          }}
+                          style={{ fontFamily: "var(--font-body)", fontSize: 13 }}
+                        >
+                          Edit
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={<IconTrash size={14} stroke={1.5} />}
+                          color="red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(lead.id);
+                          }}
+                          style={{ fontFamily: "var(--font-body)", fontSize: 13 }}
+                        >
+                          Delete
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Paper>
       )}
     </Container>
   );

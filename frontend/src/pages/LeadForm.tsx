@@ -11,6 +11,7 @@ import {
   Group,
   Stack,
   LoadingOverlay,
+  Box,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconArrowLeft, IconDeviceFloppy } from "@tabler/icons-react";
@@ -66,7 +67,7 @@ export default function LeadForm() {
         phoneNumber: lead.phoneNumber || "",
         leadSource: lead.leadSource,
         assignedSalesperson: lead.assignedSalesperson || "",
-        status: lead.status,
+        status: lead.status as LeadStatus,
         estimatedDealValue: lead.estimatedDealValue || undefined,
       });
     } catch (error) {
@@ -98,23 +99,64 @@ export default function LeadForm() {
   };
 
   return (
-    <Container size="md" py="xl" pos="relative">
+    <Container
+      size="md"
+      py="xl"
+      pos="relative"
+      style={{ maxWidth: 640 }}
+    >
       <LoadingOverlay visible={loading} overlayProps={{ radius: "sm", blur: 2 }} />
 
       <Button
         variant="subtle"
-        leftSection={<IconArrowLeft size={16} />}
+        leftSection={<IconArrowLeft size={15} stroke={1.5} />}
         onClick={() => navigate("/leads")}
         mb="md"
+        style={{
+          color: "var(--text-secondary)",
+          fontFamily: "var(--font-body)",
+          fontSize: 13,
+          padding: 0,
+          height: 32,
+        }}
       >
         Back to Leads
       </Button>
 
-      <Title order={2} mb="lg">
-        {isEditing ? "Edit Lead" : "Add New Lead"}
+      <Title
+        order={1}
+        mb="xl"
+        style={{
+          fontFamily: "var(--font-display)",
+          fontSize: 40,
+          fontWeight: 600,
+          color: "var(--text-primary)",
+          letterSpacing: "-0.03em",
+          lineHeight: 1.1,
+        }}
+      >
+        {isEditing ? "Edit Lead" : "New Lead"}
       </Title>
 
-      <Paper withBorder shadow="md" p="xl" radius="md">
+      <Box
+        style={{
+          height: 1,
+          backgroundColor: "var(--border-light)",
+          width: "100%",
+          marginBottom: "var(--space-xl)",
+        }}
+      />
+
+      <Paper
+        withBorder
+        p="xl"
+        radius="sm"
+        style={{
+          borderColor: "var(--border-light)",
+          backgroundColor: "var(--bg-surface)",
+          boxShadow: "none",
+        }}
+      >
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
             <TextInput
@@ -122,6 +164,24 @@ export default function LeadForm() {
               placeholder="John Smith"
               required
               {...form.getInputProps("leadName")}
+              styles={{
+                label: {
+                  fontFamily: "var(--font-body)",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "var(--text-secondary)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  marginBottom: 6,
+                },
+                input: {
+                  fontFamily: "var(--font-body)",
+                  borderColor: "var(--border-light)",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: 14,
+                  height: 42,
+                },
+              }}
             />
 
             <TextInput
@@ -129,64 +189,209 @@ export default function LeadForm() {
               placeholder="Acme Corp"
               required
               {...form.getInputProps("companyName")}
+              styles={{
+                label: {
+                  fontFamily: "var(--font-body)",
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: "var(--text-secondary)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  marginBottom: 6,
+                },
+                input: {
+                  fontFamily: "var(--font-body)",
+                  borderColor: "var(--border-light)",
+                  borderRadius: "var(--radius-sm)",
+                  fontSize: 14,
+                  height: 42,
+                },
+              }}
             />
 
-            <TextInput
-              label="Email"
-              placeholder="john@acme.com"
-              required
-              {...form.getInputProps("email")}
-            />
+            <Group grow>
+              <TextInput
+                label="Email"
+                placeholder="john@acme.com"
+                required
+                {...form.getInputProps("email")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-body)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+              <TextInput
+                label="Phone"
+                placeholder="+1 (555) 123-4567"
+                {...form.getInputProps("phoneNumber")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-body)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+            </Group>
 
-            <TextInput
-              label="Phone Number"
-              placeholder="+1 (555) 123-4567"
-              {...form.getInputProps("phoneNumber")}
-            />
+            <Group grow>
+              <Select
+                label="Lead Source"
+                placeholder="Select source"
+                required
+                data={LEAD_SOURCES}
+                {...form.getInputProps("leadSource")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-body)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+              <Select
+                label="Status"
+                placeholder="Select status"
+                required
+                data={LEAD_STATUSES}
+                {...form.getInputProps("status")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-body)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+            </Group>
 
-            <Select
-              label="Lead Source"
-              placeholder="Select source"
-              required
-              data={LEAD_SOURCES}
-              {...form.getInputProps("leadSource")}
-            />
+            <Group grow>
+              <TextInput
+                label="Assigned To"
+                placeholder="Sales Rep Name"
+                {...form.getInputProps("assignedSalesperson")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-body)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+              <NumberInput
+                label="Deal Value"
+                placeholder="50000"
+                prefix="$"
+                thousandSeparator
+                {...form.getInputProps("estimatedDealValue")}
+                styles={{
+                  label: {
+                    fontFamily: "var(--font-body)",
+                    fontSize: 12,
+                    fontWeight: 500,
+                    color: "var(--text-secondary)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 6,
+                  },
+                  input: {
+                    fontFamily: "var(--font-mono)",
+                    borderColor: "var(--border-light)",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: 14,
+                    height: 42,
+                  },
+                }}
+              />
+            </Group>
 
-            <TextInput
-              label="Assigned Salesperson"
-              placeholder="Sales Rep Name"
-              {...form.getInputProps("assignedSalesperson")}
-            />
-
-            <Select
-              label="Status"
-              placeholder="Select status"
-              required
-              data={LEAD_STATUSES}
-              {...form.getInputProps("status")}
-            />
-
-            <NumberInput
-              label="Estimated Deal Value"
-              placeholder="50000"
-              prefix="$"
-              thousandSeparator
-              {...form.getInputProps("estimatedDealValue")}
-            />
-
-            <Group justify="flex-end" mt="md">
+            <Group justify="flex-end" mt="xl" pt="md" style={{ borderTop: "1px solid var(--border-light)" }}>
               <Button
-                variant="light"
+                variant="subtle"
                 onClick={() => navigate("/leads")}
+                style={{
+                  color: "var(--text-secondary)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 14,
+                  fontWeight: 500,
+                }}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                leftSection={<IconDeviceFloppy size={16} />}
+                leftSection={<IconDeviceFloppy size={15} stroke={1.5} />}
                 loading={submitting}
+                style={{
+                  backgroundColor: "var(--text-primary)",
+                  color: "var(--bg-surface)",
+                  fontFamily: "var(--font-body)",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  height: 40,
+                  borderRadius: "var(--radius-sm)",
+                  letterSpacing: "0.02em",
+                }}
               >
-                {isEditing ? "Save Changes" : "Add Lead"}
+                {isEditing ? "Save Changes" : "Create Lead"}
               </Button>
             </Group>
           </Stack>
