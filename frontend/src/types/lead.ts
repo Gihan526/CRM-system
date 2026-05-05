@@ -1,3 +1,23 @@
+export interface Note {
+  id: string;
+  leadId: string;
+  content: string;
+  createdBy: string;
+  createdAt: string;
+}
+
+export interface DashboardStats {
+  totalLeads: number;
+  newLeads: number;
+  contactedLeads: number;
+  qualifiedLeads: number;
+  proposalSentLeads: number;
+  wonLeads: number;
+  lostLeads: number;
+  totalDealValue: number;
+  wonDealValue: number;
+}
+
 export interface Lead {
   id: string;
   leadName: string;
@@ -47,22 +67,3 @@ export const STATUS_COLORS: Record<LeadStatus, string> = {
   Won: "green",
   Lost: "red",
 };
-
-export interface Note {
-  id: string;
-  content: string;
-  createdBy: string;
-  createdAt: string;
-}
-
-export interface DashboardStats {
-  totalLeads: number;
-  newLeads: number;
-  contactedLeads: number;
-  qualifiedLeads: number;
-  proposalSentLeads: number;
-  wonLeads: number;
-  lostLeads: number;
-  totalDealValue: number;
-  wonDealValue: number;
-}

@@ -53,8 +53,8 @@ export default function Register() {
 
   return (
     <Container size={420} my={80} pos="relative">
-      <LoadingOverlay visible={authLoading} overlayProps={{ radius: "sm", blur: 2 }} />
-      
+      <LoadingOverlay visible={authLoading} />
+
       <Title ta="center" fw={700} size="h2" mb="xs">
         CRM
       </Title>
@@ -62,7 +62,7 @@ export default function Register() {
         Create a new account
       </Text>
 
-      <Paper withBorder shadow="md" p={30} radius="md">
+      <Paper withBorder shadow="sm" p={30} radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
@@ -98,7 +98,14 @@ export default function Register() {
         <Box mt="md" ta="center">
           <Text size="sm" c="dimmed">
             Already have an account?{" "}
-            <Anchor size="sm" href="/login" onClick={(e) => { e.preventDefault(); navigate("/login"); }}>
+            <Anchor
+              size="sm"
+              href="/login"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/login");
+              }}
+            >
               Sign in
             </Anchor>
           </Text>

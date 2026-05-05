@@ -65,17 +65,10 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AppShell
-      navbar={{ width: 220, breakpoint: "sm" }}
-      padding={0}
-      styles={{
-        main: {
-          marginLeft: 220,
-          minHeight: "100vh",
-          backgroundColor: "var(--bg-primary)",
-        },
-      }}
+      navbar={{ width: 250, breakpoint: "sm" }}
+      padding="md"
     >
-      <AppShell.Navbar>
+      <AppShell.Navbar p="md">
         <Sidebar />
       </AppShell.Navbar>
       <AppShell.Main>{children}</AppShell.Main>
@@ -86,7 +79,6 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Auth Routes (no sidebar) */}
       <Route
         path="/login"
         element={
@@ -103,8 +95,6 @@ function AppRoutes() {
           </AuthRoute>
         }
       />
-
-      {/* Protected Routes (with sidebar) */}
       <Route
         path="/dashboard"
         element={
@@ -155,7 +145,6 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
-
       <Route path="/" element={<Navigate to="/login" replace />} />
     </Routes>
   );

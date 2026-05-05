@@ -49,8 +49,8 @@ export default function Login() {
 
   return (
     <Container size={420} my={80} pos="relative">
-      <LoadingOverlay visible={authLoading} overlayProps={{ radius: "sm", blur: 2 }} />
-      
+      <LoadingOverlay visible={authLoading} />
+
       <Title ta="center" fw={700} size="h2" mb="xs">
         CRM
       </Title>
@@ -58,7 +58,7 @@ export default function Login() {
         Sign in to access your dashboard
       </Text>
 
-      <Paper withBorder shadow="md" p={30} radius="md">
+      <Paper withBorder shadow="sm" p={30} radius="md">
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack>
             <TextInput
@@ -86,7 +86,14 @@ export default function Login() {
         <Box mt="md" ta="center">
           <Text size="sm" c="dimmed">
             Don't have an account?{" "}
-            <Anchor size="sm" href="/register" onClick={(e) => { e.preventDefault(); navigate("/register"); }}>
+            <Anchor
+              size="sm"
+              href="/register"
+              onClick={(e) => {
+                e.preventDefault();
+                navigate("/register");
+              }}
+            >
               Create account
             </Anchor>
           </Text>
