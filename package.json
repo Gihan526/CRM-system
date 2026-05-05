@@ -1,0 +1,18 @@
+{
+  "name": "crm-app",
+  "version": "1.0.0",
+  "description": "CRM Application with React, Prisma, SQLite, Mantine UI, and Better Auth",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "vite": "^6.0.0"
+  }
+}
