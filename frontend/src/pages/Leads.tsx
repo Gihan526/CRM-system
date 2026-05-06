@@ -23,6 +23,7 @@ import {
   IconEdit,
   IconTrash,
   IconDotsVertical,
+  IconDownload,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { SegmentedControl } from "@mantine/core";
@@ -87,6 +88,55 @@ export default function Leads() {
     return true;
   });
 
+  const downloadCSV = (data: Lead[]) => {
+    const headers = [
+      "Lead Name",
+      "Company",
+      "Email",
+      "Phone",
+      "Source",
+      "Status",
+      "Assigned",
+      "Deal Value",
+      "Created",
+    ];
+
+    const escapeCSV = (value: string | number | null | undefined) => {
+      const str = value === null || value === undefined ? "" : String(value);
+      if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return str;
+    };
+
+    const rows = data.map((lead) =>
+      [
+        lead.leadName,
+        lead.companyName,
+        lead.email,
+        lead.phoneNumber,
+        lead.leadSource,
+        lead.status,
+        lead.assignedSalesperson,
+        lead.estimatedDealValue ?? "",
+        new Date(lead.createdAt).toLocaleDateString("en-US"),
+      ]
+        .map(escapeCSV)
+        .join(",")
+    );
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `leads-${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this lead?")) return;
     try {
@@ -115,12 +165,22 @@ export default function Leads() {
           <Title order={1} mb="xs">Leads</Title>
           <Text c="dimmed">Manage your sales pipeline</Text>
         </div>
-        <Button
-          leftSection={<IconPlus size={16} />}
-          onClick={() => navigate("/leads/new")}
-        >
-          Add New Lead
-        </Button>
+        <Group gap="sm">
+          <Button
+            variant="default"
+            leftSection={<IconDownload size={16} />}
+            onClick={() => downloadCSV(filteredLeads)}
+            disabled={filteredLeads.length === 0}
+          >
+            Export CSV
+          </Button>
+          <Button
+            leftSection={<IconPlus size={16} />}
+            onClick={() => navigate("/leads/new")}
+          >
+            Add New Lead
+          </Button>
+        </Group>
       </Group>
 
       <SegmentedControl
