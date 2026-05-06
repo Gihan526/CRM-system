@@ -25,14 +25,18 @@ import {
   IconDotsVertical,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
+import { SegmentedControl } from "@mantine/core";
 import { leadsApi } from "../lib/api";
 import { LEAD_STATUSES, LEAD_SOURCES, STATUS_COLORS } from "../types/lead";
 import type { Lead, LeadStatus } from "../types/lead";
+import { useAuth } from "../context/AuthContext";
 
 export default function Leads() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"all" | "mine">("all");
   const [filters, setFilters] = useState({
     status: "",
     leadSource: "",
@@ -63,6 +67,8 @@ export default function Leads() {
   }, [loadLeads]);
 
   const filteredLeads = leads.filter((lead) => {
+    if (viewMode === "mine" && lead.assignedSalesperson !== user?.name)
+      return false;
     if (filters.leadSource && lead.leadSource !== filters.leadSource)
       return false;
     if (
@@ -116,6 +122,16 @@ export default function Leads() {
           Add New Lead
         </Button>
       </Group>
+
+      <SegmentedControl
+        value={viewMode}
+        onChange={(value) => setViewMode(value as "all" | "mine")}
+        data={[
+          { label: "All Leads", value: "all" },
+          { label: "My Leads", value: "mine" },
+        ]}
+        mb="md"
+      />
 
       <Paper withBorder p="md" mb="md" radius="md">
         <Group grow>
