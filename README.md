@@ -59,6 +59,10 @@ The app lets you create leads, track their status (New → Contacted → Qualifi
 - Search by lead name, company name, or email
 - Frontend filtering (source/assigned/search) + backend filtering (status)
 
+### Bonus Features
+- **"My Leads" Filter** — Toggle between viewing all leads or only leads assigned to the logged-in user. Useful for sales teams where reps focus on their own pipeline.
+- **Export to CSV** — Download the current filtered leads view as a CSV file with all lead fields (name, company, email, phone, source, status, assigned, deal value, created date). Properly escapes commas, quotes, and newlines.
+
 ---
 
 ## How to Run Locally
