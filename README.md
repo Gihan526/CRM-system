@@ -13,7 +13,7 @@ The app lets you create leads, track their status (New → Contacted → Qualifi
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **Frontend** | React 19 + Vite + TypeScript | UI framework and build tool |
-| **Frontend UI** | Mantine v7 | Component library (tables, forms, cards, notifications) |
+| **Frontend UI** | Mantine v7 + Custom CSS | Component library with bespoke warm editorial design system |
 | **Frontend Icons** | Tabler Icons | Icon set |
 | **Frontend Routing** | React Router v7 | Client-side navigation |
 | **Backend** | Express.js + TypeScript | REST API server |
@@ -60,7 +60,6 @@ The app lets you create leads, track their status (New → Contacted → Qualifi
 - Frontend filtering (source/assigned/search) + backend filtering (status)
 
 ### Bonus Features
-- **"My Leads" Filter** — Toggle between viewing all leads or only leads assigned to the logged-in user. Useful for sales teams where reps focus on their own pipeline.
 - **Export to CSV** — Download the current filtered leads view as a CSV file with all lead fields (name, company, email, phone, source, status, assigned, deal value, created date). Properly escapes commas, quotes, and newlines.
 
 ---
@@ -205,8 +204,7 @@ backend/prisma/schema.prisma
 5. **No email verification** — Registration is open without email confirmation
 6. **No password reset flow** — Users cannot recover forgotten passwords
 7. **SQLite only** — Not suitable for concurrent multi-user production workloads without migrating to PostgreSQL/MySQL
-8. **No export functionality** — Cannot export leads to CSV/Excel
-9. **Assigned salesperson is free text** — No user directory or autocomplete
+8. **Assigned salesperson is free text** — No user directory or autocomplete
 
 ---
 
@@ -217,7 +215,7 @@ This project was built as a hands-on way to learn modern full-stack patterns. Th
 1. **Understand Better Auth** — Setting up email/password auth with session cookies without building a custom auth system from scratch
 2. **Practice Prisma + SQLite** — Using a type-safe ORM with a zero-config database for rapid prototyping
 3. **Build a complete CRUD app** — From database schema to API to UI, covering create, read, update, delete for a real-world entity (leads)
-4. **Use a component library** — Leveraging Mantine for professional-looking tables, forms, and layout without writing custom CSS
+4. **Build a custom design system** — Creating a warm, editorial UI with OKLCH colors, custom typography, and bespoke component styling on top of Mantine's foundation
 
 ### What went well
 - Better Auth integrated smoothly with Express and Prisma
