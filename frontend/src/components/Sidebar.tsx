@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { NavLink, Text, Group, Avatar, Divider } from "@mantine/core";
+import { Divider } from "@mantine/core";
 import {
   IconLayoutDashboard,
   IconUsers,
@@ -30,52 +30,93 @@ export default function Sidebar() {
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div>
-        <Text size="xl" fw={700} mb={2}>CRM</Text>
-        <Text size="xs" c="dimmed" mb="md">Lead Management</Text>
+        <div className="sidebar-logo">CRM</div>
+        <div className="sidebar-tagline">Lead Management</div>
       </div>
 
-      <Divider mb="sm" />
+      <Divider my="lg" style={{ borderColor: "var(--border)" }} />
 
-      <div style={{ flex: 1 }}>
-        <NavLink
-          label="Dashboard"
-          leftSection={<IconLayoutDashboard size={18} stroke={1.5} />}
-          active={isActive("/dashboard")}
+      <nav className="sidebar-nav" style={{ flex: 1 }}>
+        <button
+          className={`sidebar-nav-item ${isActive("/dashboard") ? "active" : ""}`}
           onClick={() => navigate("/dashboard")}
-          variant="subtle"
-        />
-        <NavLink
-          label="Leads"
-          leftSection={<IconUsers size={18} stroke={1.5} />}
-          active={isActive("/leads")}
+        >
+          <IconLayoutDashboard size={18} stroke={1.5} />
+          Dashboard
+        </button>
+        <button
+          className={`sidebar-nav-item ${isActive("/leads") ? "active" : ""}`}
           onClick={() => navigate("/leads")}
-          variant="subtle"
-        />
-      </div>
+        >
+          <IconUsers size={18} stroke={1.5} />
+          Leads
+        </button>
+      </nav>
 
-      <Divider mb="sm" />
+      <Divider my="lg" style={{ borderColor: "var(--border)" }} />
 
       <div>
-        <Group gap="sm" mb="sm">
-          <Avatar radius="xl" size="sm" color="gray">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 16,
+            padding: "0 6px",
+          }}
+        >
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "var(--bg-sunken)",
+              border: "1px solid var(--border)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "0.875rem",
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+              flexShrink: 0,
+            }}
+          >
             {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
-          </Avatar>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Text size="sm" fw={500} truncate>
-              {user?.name || user?.email}
-            </Text>
-            <Text size="xs" c="dimmed" truncate>
-              {user?.email}
-            </Text>
           </div>
-        </Group>
-        <NavLink
-          label="Logout"
-          leftSection={<IconLogout size={16} stroke={1.5} />}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "var(--text-primary)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {user?.name || user?.email}
+            </div>
+            <div
+              style={{
+                fontSize: "0.75rem",
+                color: "var(--text-tertiary)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {user?.email}
+            </div>
+          </div>
+        </div>
+        <button
+          className="sidebar-nav-item"
           onClick={handleLogout}
-          variant="subtle"
-          color="red"
-        />
+          style={{ color: "var(--error)" }}
+        >
+          <IconLogout size={16} stroke={1.5} />
+          Logout
+        </button>
       </div>
     </div>
   );

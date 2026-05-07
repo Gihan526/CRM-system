@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Container,
-  Paper,
   Title,
   Text,
   TextInput,
@@ -48,61 +46,96 @@ export default function Login() {
   };
 
   return (
-    <Container size={420} my={80} pos="relative">
-      <LoadingOverlay visible={authLoading} />
+    <div className="auth-layout">
+      <div className="auth-brand">
+        <div className="auth-brand-inner">
+          <div className="auth-brand-title">CRM</div>
+          <div className="auth-brand-subtitle">
+            A calm, focused space for tracking your sales pipeline.
+          </div>
+        </div>
+      </div>
 
-      <Title ta="center" fw={700} size="h2" mb="xs">
-        CRM
-      </Title>
-      <Text c="dimmed" size="sm" ta="center" mb={30}>
-        Sign in to access your dashboard
-      </Text>
+      <div className="auth-form-panel">
+        <LoadingOverlay visible={authLoading} overlayProps={{ blur: 2 }} />
 
-      <Paper withBorder shadow="sm" p={30} radius="md">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack>
-            <TextInput
-              label="Email"
-              placeholder="admin@example.com"
-              leftSection={<IconMail size={16} />}
-              required
-              {...form.getInputProps("email")}
-            />
-
-            <PasswordInput
-              label="Password"
-              placeholder="Your password"
-              leftSection={<IconLock size={16} />}
-              required
-              {...form.getInputProps("password")}
-            />
-
-            <Button type="submit" fullWidth mt="md" loading={form.submitting}>
-              Sign In
-            </Button>
-          </Stack>
-        </form>
-
-        <Box mt="md" ta="center">
-          <Text size="sm" c="dimmed">
-            Don't have an account?{" "}
-            <Anchor
-              size="sm"
-              href="/register"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/register");
-              }}
-            >
-              Create account
-            </Anchor>
+        <div className="auth-form-card">
+          <Title
+            order={2}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "1.75rem",
+              fontWeight: 600,
+              marginBottom: 4,
+              color: "var(--text-primary)",
+            }}
+          >
+            Welcome back
+          </Title>
+          <Text
+            size="sm"
+            style={{
+              color: "var(--text-secondary)",
+              marginBottom: 28,
+            }}
+          >
+            Sign in to access your dashboard
           </Text>
-        </Box>
-      </Paper>
 
-      <Text size="xs" c="dimmed" ta="center" mt="xl">
-        Test credentials: admin@example.com / password123
-      </Text>
-    </Container>
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="md">
+              <TextInput
+                label="Email"
+                placeholder="admin@example.com"
+                leftSection={<IconMail size={16} color="var(--text-tertiary)" />}
+                required
+                {...form.getInputProps("email")}
+              />
+
+              <PasswordInput
+                label="Password"
+                placeholder="Your password"
+                leftSection={<IconLock size={16} color="var(--text-tertiary)" />}
+                required
+                {...form.getInputProps("password")}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                mt="sm"
+                loading={form.submitting}
+                style={{ height: 44 }}
+              >
+                Sign In
+              </Button>
+            </Stack>
+          </form>
+
+          <Box mt="lg" ta="center">
+            <Text size="sm" style={{ color: "var(--text-secondary)" }}>
+              Don&apos;t have an account?{" "}
+              <Anchor
+                size="sm"
+                href="/register"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/register");
+                }}
+              >
+                Create account
+              </Anchor>
+            </Text>
+          </Box>
+        </div>
+
+        <Text
+          size="xs"
+          style={{ color: "var(--text-tertiary)", textAlign: "center", marginTop: 24 }}
+        >
+          Test credentials: admin@example.com / password123
+        </Text>
+      </div>
+    </div>
   );
 }

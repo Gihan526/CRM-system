@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { MantineProvider, AppShell } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
@@ -23,6 +23,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          background: "var(--bg-base)",
+          color: "var(--text-secondary)",
+          fontFamily: "var(--font-body)",
         }}
       >
         Loading...
@@ -48,6 +51,9 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
           justifyContent: "center",
           alignItems: "center",
           height: "100vh",
+          background: "var(--bg-base)",
+          color: "var(--text-secondary)",
+          fontFamily: "var(--font-body)",
         }}
       >
         Loading...
@@ -64,15 +70,12 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShell
-      navbar={{ width: 250, breakpoint: "sm" }}
-      padding="md"
-    >
-      <AppShell.Navbar p="md">
+    <div className="app-layout">
+      <aside className="app-sidebar">
         <Sidebar />
-      </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
-    </AppShell>
+      </aside>
+      <main className="app-main">{children}</main>
+    </div>
   );
 }
 
@@ -152,8 +155,16 @@ function AppRoutes() {
 
 function App() {
   return (
-    <MantineProvider>
-      <Notifications />
+    <MantineProvider
+      theme={{
+        fontFamily: "var(--font-body)",
+        fontFamilyMonospace: "var(--font-mono)",
+        headings: {
+          fontFamily: "var(--font-body)",
+        },
+      }}
+    >
+      <Notifications position="top-right" zIndex={1000} />
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>

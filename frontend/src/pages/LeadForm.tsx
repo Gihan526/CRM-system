@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Container,
-  Paper,
-  Title,
   TextInput,
   Select,
   NumberInput,
@@ -117,7 +115,7 @@ export default function LeadForm() {
   };
 
   return (
-    <Container size="md" py="xl" pos="relative">
+    <Container size="md" pos="relative" py={0}>
       <LoadingOverlay visible={loading} />
 
       <Button
@@ -125,32 +123,46 @@ export default function LeadForm() {
         leftSection={<IconArrowLeft size={16} />}
         onClick={() => navigate("/leads")}
         mb="md"
+        style={{ paddingLeft: 0 }}
       >
         Back to Leads
       </Button>
 
-      <Title order={1} mb="xl">
+      <h1 style={{ marginBottom: 32 }}>
         {isEditing ? "Edit Lead" : "New Lead"}
-      </Title>
+      </h1>
 
-      <Paper withBorder shadow="sm" p="xl" radius="md">
+      <div className="form-section">
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack>
-            <TextInput
-              label="Lead Name"
-              placeholder="John Smith"
-              required
-              {...form.getInputProps("leadName")}
-            />
+          <Stack gap="lg">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+              }}
+            >
+              <TextInput
+                label="Lead Name"
+                placeholder="John Smith"
+                required
+                {...form.getInputProps("leadName")}
+              />
+              <TextInput
+                label="Company Name"
+                placeholder="Acme Corp"
+                required
+                {...form.getInputProps("companyName")}
+              />
+            </div>
 
-            <TextInput
-              label="Company Name"
-              placeholder="Acme Corp"
-              required
-              {...form.getInputProps("companyName")}
-            />
-
-            <Group grow>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+              }}
+            >
               <TextInput
                 label="Email"
                 placeholder="john@acme.com"
@@ -162,9 +174,15 @@ export default function LeadForm() {
                 placeholder="+1 (555) 123-4567"
                 {...form.getInputProps("phoneNumber")}
               />
-            </Group>
+            </div>
 
-            <Group grow>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+              }}
+            >
               <Select
                 label="Lead Source"
                 placeholder="Select source"
@@ -179,9 +197,15 @@ export default function LeadForm() {
                 data={LEAD_STATUSES}
                 {...form.getInputProps("status")}
               />
-            </Group>
+            </div>
 
-            <Group grow>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+                gap: 20,
+              }}
+            >
               <TextInput
                 label="Assigned To"
                 placeholder="Sales Rep Name"
@@ -194,7 +218,7 @@ export default function LeadForm() {
                 thousandSeparator
                 {...form.getInputProps("estimatedDealValue")}
               />
-            </Group>
+            </div>
 
             <Group justify="flex-end" mt="xl">
               <Button variant="subtle" onClick={() => navigate("/leads")}>
@@ -210,7 +234,7 @@ export default function LeadForm() {
             </Group>
           </Stack>
         </form>
-      </Paper>
+      </div>
     </Container>
   );
 }

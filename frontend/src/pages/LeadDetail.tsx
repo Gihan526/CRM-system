@@ -2,31 +2,69 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Container,
-  Paper,
-  Title,
-  Text,
-  Badge,
   Button,
   Group,
   Stack,
   Textarea,
   LoadingOverlay,
   Divider,
-  Timeline,
-  Avatar,
-  SimpleGrid,
 } from "@mantine/core";
 import {
   IconArrowLeft,
   IconEdit,
   IconTrash,
-  IconNote,
   IconSend,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { leadsApi, notesApi } from "../lib/api";
-import { STATUS_COLORS } from "../types/lead";
 import type { Lead, LeadStatus, Note } from "../types/lead";
+
+function StatusBadge({ status }: { status: LeadStatus }) {
+  const colorMap: Record<LeadStatus, string> = {
+    New: "var(--status-new)",
+    Contacted: "var(--status-contacted)",
+    Qualified: "var(--status-qualified)",
+    "Proposal Sent": "var(--status-proposal)",
+    Won: "var(--status-won)",
+    Lost: "var(--status-lost)",
+  };
+  const bgMap: Record<LeadStatus, string> = {
+    New: "var(--status-new-bg)",
+    Contacted: "var(--status-contacted-bg)",
+    Qualified: "var(--status-qualified-bg)",
+    "Proposal Sent": "var(--status-proposal-bg)",
+    Won: "var(--status-won-bg)",
+    Lost: "var(--status-lost-bg)",
+  };
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "4px 12px",
+        borderRadius: "var(--radius-sm)",
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        letterSpacing: "0.03em",
+        background: bgMap[status],
+        color: colorMap[status],
+      }}
+    >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: colorMap[status],
+          flexShrink: 0,
+        }}
+      />
+      {status}
+    </span>
+  );
+}
 
 export default function LeadDetail() {
   const navigate = useNavigate();
@@ -135,7 +173,7 @@ export default function LeadDetail() {
   if (!lead && !loading) {
     return (
       <Container py="xl">
-        <Text c="dimmed">Lead not found</Text>
+        <p style={{ color: "var(--text-secondary)" }}>Lead not found</p>
         <Button variant="subtle" onClick={() => navigate("/leads")} mt="md">
           Back to Leads
         </Button>
@@ -143,8 +181,22 @@ export default function LeadDetail() {
     );
   }
 
+  const statusPillClass = (status: LeadStatus) => {
+    const base = "status-pill";
+    const active = lead?.status === status ? "active" : "";
+    const map: Record<LeadStatus, string> = {
+      New: "status-new",
+      Contacted: "status-contacted",
+      Qualified: "status-qualified",
+      "Proposal Sent": "status-proposal",
+      Won: "status-won",
+      Lost: "status-lost",
+    };
+    return `${base} ${active} ${map[status]}`.trim();
+  };
+
   return (
-    <Container size="md" py="xl" pos="relative">
+    <Container size="md" pos="relative" py={0}>
       <LoadingOverlay visible={loading} />
 
       <Button
@@ -152,110 +204,142 @@ export default function LeadDetail() {
         leftSection={<IconArrowLeft size={16} />}
         onClick={() => navigate("/leads")}
         mb="md"
+        style={{ paddingLeft: 0 }}
       >
         Back to Leads
       </Button>
 
       {lead && (
-        <Stack gap="md">
-          <Group justify="space-between" align="flex-start">
-            <div>
-              <Group gap="sm" mb="xs">
-                <Title order={1}>{lead.leadName}</Title>
-                <Badge color={STATUS_COLORS[lead.status as LeadStatus]} variant="light">
-                  {lead.status}
-                </Badge>
+        <Stack gap="lg">
+          {/* Hero */}
+          <div className="lead-hero">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                flexWrap: "wrap",
+                gap: 16,
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                  <div className="lead-hero-name">{lead.leadName}</div>
+                  <StatusBadge status={lead.status as LeadStatus} />
+                </div>
+                <div className="lead-hero-company">{lead.companyName}</div>
+              </div>
+              <Group gap="sm">
+                <Button
+                  variant="default"
+                  leftSection={<IconEdit size={16} />}
+                  onClick={() => navigate(`/leads/${id}/edit`)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="default"
+                  color="red"
+                  leftSection={<IconTrash size={16} />}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
               </Group>
-              <Text size="lg" c="dimmed">
-                {lead.companyName}
-              </Text>
             </div>
-            <Group gap="sm">
-              <Button
-                variant="default"
-                leftSection={<IconEdit size={16} />}
-                onClick={() => navigate(`/leads/${id}/edit`)}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="default"
-                color="red"
-                leftSection={<IconTrash size={16} />}
-                onClick={handleDelete}
-              >
-                Delete
-              </Button>
-            </Group>
-          </Group>
+          </div>
 
-          <Paper withBorder shadow="sm" p="xl" radius="md">
-            <Title order={3} mb="lg">
-              Lead Details
-            </Title>
-
-            <SimpleGrid cols={2} spacing="lg">
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Email</Text>
-                <Text>{lead.email}</Text>
-              </div>
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Phone</Text>
-                <Text>{lead.phoneNumber || "—"}</Text>
-              </div>
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Lead Source</Text>
-                <Text>{lead.leadSource}</Text>
-              </div>
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Assigned To</Text>
-                <Text>{lead.assignedSalesperson || "—"}</Text>
-              </div>
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Deal Value</Text>
-                <Text>{lead.estimatedDealValue ? `$${lead.estimatedDealValue.toLocaleString()}` : "—"}</Text>
-              </div>
-              <div>
-                <Text size="sm" c="dimmed" fw={500} mb={4}>Created</Text>
-                <Text>
-                  {new Date(lead.createdAt).toLocaleDateString("en-US", {
+          {/* Details */}
+          <div className="section-card">
+            <div className="section-title">Lead Details</div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: "24px 32px",
+              }}
+            >
+              {[
+                { label: "Email", value: lead.email },
+                { label: "Phone", value: lead.phoneNumber || "—" },
+                { label: "Lead Source", value: lead.leadSource },
+                { label: "Assigned To", value: lead.assignedSalesperson || "—" },
+                {
+                  label: "Deal Value",
+                  value: lead.estimatedDealValue
+                    ? `$${lead.estimatedDealValue.toLocaleString()}`
+                    : "—",
+                  mono: true,
+                },
+                {
+                  label: "Created",
+                  value: new Date(lead.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
-                  })}
-                </Text>
-              </div>
-            </SimpleGrid>
+                  }),
+                },
+              ].map((item) => (
+                <div key={item.label}>
+                  <div
+                    style={{
+                      fontSize: "0.6875rem",
+                      fontWeight: 600,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      color: "var(--text-tertiary)",
+                      marginBottom: 6,
+                    }}
+                  >
+                    {item.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "1rem",
+                      color: "var(--text-primary)",
+                      fontFamily: item.mono ? "var(--font-mono)" : "var(--font-body)",
+                    }}
+                  >
+                    {item.value}
+                  </div>
+                </div>
+              ))}
+            </div>
 
-            <Divider my="xl" />
+            <Divider my="xl" style={{ borderColor: "var(--border)" }} />
 
-            <Text size="sm" c="dimmed" fw={500} mb="sm">
+            <div
+              style={{
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                color: "var(--text-tertiary)",
+                marginBottom: 14,
+              }}
+            >
               Update Status
-            </Text>
-            <Group gap="xs">
+            </div>
+            <div className="status-pill-group">
               {(["New", "Contacted", "Qualified", "Proposal Sent", "Won", "Lost"] as LeadStatus[]).map(
                 (status) => (
-                  <Button
+                  <button
                     key={status}
-                    size="xs"
-                    variant={lead.status === status ? "filled" : "default"}
-                    color={STATUS_COLORS[status]}
+                    className={statusPillClass(status)}
                     onClick={() => handleStatusUpdate(status)}
                   >
                     {status}
-                  </Button>
+                  </button>
                 )
               )}
-            </Group>
-          </Paper>
+            </div>
+          </div>
 
-          <Paper withBorder shadow="sm" p="xl" radius="md">
-            <Group gap="xs" mb="lg">
-              <IconNote size={20} />
-              <Title order={3}>Notes</Title>
-            </Group>
+          {/* Notes */}
+          <div className="section-card">
+            <div className="section-title">Notes</div>
 
-            <Group align="flex-start" mb="lg" gap="sm">
+            <div style={{ display: "flex", gap: 12, marginBottom: 28 }}>
               <Textarea
                 placeholder="Add a note about this lead..."
                 style={{ flex: 1 }}
@@ -268,55 +352,48 @@ export default function LeadDetail() {
                 onClick={handleAddNote}
                 loading={submittingNote}
                 disabled={!noteContent.trim()}
+                style={{ alignSelf: "flex-start", height: 44 }}
               >
                 Add
               </Button>
-            </Group>
-
-            <Divider mb="lg" />
+            </div>
 
             {notes.length === 0 ? (
-              <Text c="dimmed" ta="center" py="xl">
+              <p style={{ color: "var(--text-tertiary)", textAlign: "center", padding: "32px 0" }}>
                 No notes yet. Add your first note above.
-              </Text>
+              </p>
             ) : (
-              <Timeline active={notes.length} bulletSize={28} lineWidth={2}>
+              <div className="notes-timeline">
                 {notes.map((note) => (
-                  <Timeline.Item
-                    key={note.id}
-                    bullet={
-                      <Avatar size={28} radius="xl" color="gray">
+                  <div key={note.id} className="notes-timeline-item">
+                    <div className="notes-timeline-bullet">
+                      <div className="notes-timeline-avatar">
                         {note.createdBy.charAt(0)}
-                      </Avatar>
-                    }
-                    title={
-                      <Group gap="xs">
-                        <Text size="sm" fw={500}>
-                          {note.createdBy}
-                        </Text>
-                        <Text size="xs" c="dimmed">
-                          {new Date(note.createdAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}{" "}
-                          at{" "}
-                          {new Date(note.createdAt).toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </Text>
-                      </Group>
-                    }
-                  >
-                    <Text size="sm" c="dimmed" mt={4}>
-                      {note.content}
-                    </Text>
-                  </Timeline.Item>
+                      </div>
+                    </div>
+                    <div className="notes-timeline-header">
+                      <span className="notes-timeline-author">
+                        {note.createdBy}
+                      </span>
+                      <span className="notes-timeline-date">
+                        {new Date(note.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}{" "}
+                        at{" "}
+                        {new Date(note.createdAt).toLocaleTimeString("en-US", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </div>
+                    <div className="notes-timeline-content">{note.content}</div>
+                  </div>
                 ))}
-              </Timeline>
+              </div>
             )}
-          </Paper>
+          </div>
         </Stack>
       )}
     </Container>

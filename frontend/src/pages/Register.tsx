@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Container,
-  Paper,
   Title,
   Text,
   TextInput,
@@ -52,65 +50,97 @@ export default function Register() {
   };
 
   return (
-    <Container size={420} my={80} pos="relative">
-      <LoadingOverlay visible={authLoading} />
+    <div className="auth-layout">
+      <div className="auth-brand">
+        <div className="auth-brand-inner">
+          <div className="auth-brand-title">CRM</div>
+          <div className="auth-brand-subtitle">
+            Start tracking your leads with clarity and focus.
+          </div>
+        </div>
+      </div>
 
-      <Title ta="center" fw={700} size="h2" mb="xs">
-        CRM
-      </Title>
-      <Text c="dimmed" size="sm" ta="center" mb={30}>
-        Create a new account
-      </Text>
+      <div className="auth-form-panel">
+        <LoadingOverlay visible={authLoading} overlayProps={{ blur: 2 }} />
 
-      <Paper withBorder shadow="sm" p={30} radius="md">
-        <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack>
-            <TextInput
-              label="Email"
-              placeholder="you@example.com"
-              leftSection={<IconMail size={16} />}
-              required
-              {...form.getInputProps("email")}
-            />
-
-            <PasswordInput
-              label="Password"
-              placeholder="Min 8 characters"
-              leftSection={<IconLock size={16} />}
-              required
-              {...form.getInputProps("password")}
-            />
-
-            <PasswordInput
-              label="Confirm Password"
-              placeholder="Repeat your password"
-              leftSection={<IconLock size={16} />}
-              required
-              {...form.getInputProps("confirmPassword")}
-            />
-
-            <Button type="submit" fullWidth mt="md" loading={form.submitting}>
-              Create Account
-            </Button>
-          </Stack>
-        </form>
-
-        <Box mt="md" ta="center">
-          <Text size="sm" c="dimmed">
-            Already have an account?{" "}
-            <Anchor
-              size="sm"
-              href="/login"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/login");
-              }}
-            >
-              Sign in
-            </Anchor>
+        <div className="auth-form-card">
+          <Title
+            order={2}
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "1.75rem",
+              fontWeight: 600,
+              marginBottom: 4,
+              color: "var(--text-primary)",
+            }}
+          >
+            Create account
+          </Title>
+          <Text
+            size="sm"
+            style={{
+              color: "var(--text-secondary)",
+              marginBottom: 28,
+            }}
+          >
+            Set up your CRM in seconds
           </Text>
-        </Box>
-      </Paper>
-    </Container>
+
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="md">
+              <TextInput
+                label="Email"
+                placeholder="you@example.com"
+                leftSection={<IconMail size={16} color="var(--text-tertiary)" />}
+                required
+                {...form.getInputProps("email")}
+              />
+
+              <PasswordInput
+                label="Password"
+                placeholder="Min 8 characters"
+                leftSection={<IconLock size={16} color="var(--text-tertiary)" />}
+                required
+                {...form.getInputProps("password")}
+              />
+
+              <PasswordInput
+                label="Confirm Password"
+                placeholder="Repeat your password"
+                leftSection={<IconLock size={16} color="var(--text-tertiary)" />}
+                required
+                {...form.getInputProps("confirmPassword")}
+              />
+
+              <Button
+                type="submit"
+                fullWidth
+                mt="sm"
+                loading={form.submitting}
+                style={{ height: 44 }}
+              >
+                Create Account
+              </Button>
+            </Stack>
+          </form>
+
+          <Box mt="lg" ta="center">
+            <Text size="sm" style={{ color: "var(--text-secondary)" }}>
+              Already have an account?{" "}
+              <Anchor
+                size="sm"
+                href="/login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/login");
+                }}
+              >
+                Sign in
+              </Anchor>
+            </Text>
+          </Box>
+        </div>
+      </div>
+    </div>
   );
 }

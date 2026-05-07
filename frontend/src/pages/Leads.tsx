@@ -2,10 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
-  Title,
   Button,
   Table,
-  Badge,
   Group,
   Text,
   Select,
@@ -13,8 +11,6 @@ import {
   LoadingOverlay,
   ActionIcon,
   Menu,
-  Paper,
-  Card,
 } from "@mantine/core";
 import {
   IconPlus,
@@ -26,18 +22,61 @@ import {
   IconDownload,
 } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { SegmentedControl } from "@mantine/core";
 import { leadsApi } from "../lib/api";
-import { LEAD_STATUSES, LEAD_SOURCES, STATUS_COLORS } from "../types/lead";
+import { LEAD_STATUSES, LEAD_SOURCES } from "../types/lead";
 import type { Lead, LeadStatus } from "../types/lead";
-import { useAuth } from "../context/AuthContext";
+
+function StatusBadge({ status }: { status: LeadStatus }) {
+  const colorMap: Record<LeadStatus, string> = {
+    New: "var(--status-new)",
+    Contacted: "var(--status-contacted)",
+    Qualified: "var(--status-qualified)",
+    "Proposal Sent": "var(--status-proposal)",
+    Won: "var(--status-won)",
+    Lost: "var(--status-lost)",
+  };
+  const bgMap: Record<LeadStatus, string> = {
+    New: "var(--status-new-bg)",
+    Contacted: "var(--status-contacted-bg)",
+    Qualified: "var(--status-qualified-bg)",
+    "Proposal Sent": "var(--status-proposal-bg)",
+    Won: "var(--status-won-bg)",
+    Lost: "var(--status-lost-bg)",
+  };
+
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "4px 10px",
+        borderRadius: "var(--radius-sm)",
+        fontSize: "0.6875rem",
+        fontWeight: 600,
+        letterSpacing: "0.03em",
+        background: bgMap[status],
+        color: colorMap[status],
+      }}
+    >
+      <span
+        style={{
+          width: 6,
+          height: 6,
+          borderRadius: "50%",
+          background: colorMap[status],
+          flexShrink: 0,
+        }}
+      />
+      {status}
+    </span>
+  );
+}
 
 export default function Leads() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<"all" | "mine">("all");
   const [filters, setFilters] = useState({
     status: "",
     leadSource: "",
@@ -68,8 +107,6 @@ export default function Leads() {
   }, [loadLeads]);
 
   const filteredLeads = leads.filter((lead) => {
-    if (viewMode === "mine" && lead.assignedSalesperson !== user?.name)
-      return false;
     if (filters.leadSource && lead.leadSource !== filters.leadSource)
       return false;
     if (
@@ -160,10 +197,21 @@ export default function Leads() {
     <Container size="xl" pos="relative">
       <LoadingOverlay visible={loading} />
 
-      <Group justify="space-between" align="flex-end" mb="xl">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          marginBottom: 32,
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
         <div>
-          <Title order={1} mb="xs">Leads</Title>
-          <Text c="dimmed">Manage your sales pipeline</Text>
+          <h1 style={{ marginBottom: 6 }}>Leads</h1>
+          <p style={{ color: "var(--text-secondary)", fontSize: "1.0625rem", margin: 0 }}>
+            Manage your sales pipeline
+          </p>
         </div>
         <Group gap="sm">
           <Button
@@ -181,20 +229,17 @@ export default function Leads() {
             Add New Lead
           </Button>
         </Group>
-      </Group>
+      </div>
 
-      <SegmentedControl
-        value={viewMode}
-        onChange={(value) => setViewMode(value as "all" | "mine")}
-        data={[
-          { label: "All Leads", value: "all" },
-          { label: "My Leads", value: "mine" },
-        ]}
-        mb="md"
-      />
-
-      <Paper withBorder p="md" mb="md" radius="md">
-        <Group grow>
+      <div className="filter-bar" style={{ marginBottom: 24 }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 16,
+            alignItems: "flex-end",
+          }}
+        >
           <Select
             label="Status"
             placeholder="All statuses"
@@ -224,23 +269,30 @@ export default function Leads() {
             }
             leftSection={<IconSearch size={16} />}
           />
-        </Group>
-      </Paper>
+        </div>
+      </div>
 
       {filteredLeads.length === 0 ? (
-        <Card withBorder p="xl" ta="center">
-          <Text c="dimmed">No leads found</Text>
+        <div className="empty-state">
+          <p className="empty-state-text">No leads found</p>
           <Button
             variant="default"
-            mt="md"
             onClick={() => navigate("/leads/new")}
           >
             Add Your First Lead
           </Button>
-        </Card>
+        </div>
       ) : (
-        <Paper withBorder radius="md">
-          <Table highlightOnHover withTableBorder>
+        <div
+          style={{
+            background: "var(--bg-elevated)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius-lg)",
+            boxShadow: "var(--shadow-sm)",
+            overflow: "hidden",
+          }}
+        >
+          <Table highlightOnHover withTableBorder={false}>
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Lead</Table.Th>
@@ -259,26 +311,35 @@ export default function Leads() {
                   onClick={() => navigate(`/leads/${lead.id}`)}
                 >
                   <Table.Td>
-                    <Text fw={500}>{lead.leadName}</Text>
-                    <Text size="sm" c="dimmed">
+                    <Text fw={500} style={{ color: "var(--text-primary)" }}>
+                      {lead.leadName}
+                    </Text>
+                    <Text size="sm" style={{ color: "var(--text-tertiary)" }}>
                       {lead.companyName}
                     </Text>
                   </Table.Td>
                   <Table.Td>
-                    <Badge
-                      color={STATUS_COLORS[lead.status as LeadStatus]}
-                      variant="light"
-                    >
-                      {lead.status}
-                    </Badge>
+                    <StatusBadge status={lead.status as LeadStatus} />
                   </Table.Td>
-                  <Table.Td>{lead.leadSource}</Table.Td>
+                  <Table.Td style={{ color: "var(--text-secondary)" }}>
+                    {lead.leadSource}
+                  </Table.Td>
                   <Table.Td>
-                    {lead.estimatedDealValue
-                      ? `$${lead.estimatedDealValue.toLocaleString()}`
-                      : "—"}
+                    <span
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.9375rem",
+                        color: "var(--text-primary)",
+                      }}
+                    >
+                      {lead.estimatedDealValue
+                        ? `$${lead.estimatedDealValue.toLocaleString()}`
+                        : "—"}
+                    </span>
                   </Table.Td>
-                  <Table.Td>{lead.assignedSalesperson || "—"}</Table.Td>
+                  <Table.Td style={{ color: "var(--text-secondary)" }}>
+                    {lead.assignedSalesperson || "—"}
+                  </Table.Td>
                   <Table.Td>
                     <Menu>
                       <Menu.Target>
@@ -325,7 +386,7 @@ export default function Leads() {
               ))}
             </Table.Tbody>
           </Table>
-        </Paper>
+        </div>
       )}
     </Container>
   );
